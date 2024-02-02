@@ -1,5 +1,10 @@
 package br.eti.roberto.consultorio
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Person
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +14,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.NotificationCompat
 import br.eti.roberto.consultorio.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -29,8 +35,42 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
+            //snackbar ou toast não é notifications
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
+
+
+            //notification push
+            val CHANNEL_ID = "1710"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = getString(R.string.NotTitle)
+                val descriptionText = getString(R.string.lorem_ipsum)
+                val importance = NotificationManager.
+                IMPORTANCE_DEFAULT
+                val channel = NotificationChannel(CHANNEL_ID,
+                    name, importance).apply {
+                    description = descriptionText
+                }
+
+
+                val notificationManager: NotificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as
+                            NotificationManager
+                notificationManager.createNotificationChannel(channel)
+
+
+                val notification = NotificationCompat.Builder(this,
+                    CHANNEL_ID)
+                    .setContentTitle("Minha primeira notificação")
+                    .setContentText("Minha notificaçãozinha")
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .setAutoCancel(true)
+                    .build()
+
+                notificationManager.notify(1710,notification)
+                }
         }
     }
 
